@@ -40,22 +40,21 @@ function App() {
     navigate("/onboarding");
   };
 
-  // Onboarding stub UI
+  // Onboarding flow
   if (route === "onboarding") {
+    // Lazy-load onboarding wizard, but since project is small, direct import
+    const OnboardingWizard = require("./OnboardingWizard").default;
     return (
       <ThemeProvider>
         <div className="min-h-screen flex flex-col items-center justify-center bg-[var(--background-color)] text-[var(--text-color)]">
           <Header />
           <main className="flex-1 flex flex-col justify-center items-center w-full">
-            <div className="bg-[var(--background-navbar)] rounded-xl border border-[var(--border-color)] p-6 shadow-md max-w-lg w-full mt-20 md:mt-32">
-              <h2 className="font-bold text-2xl mb-3 text-center">Welcome!</h2>
-              <div className="mb-6 text-center text-[var(--text-secondary)]">
-                {/* Simplified onboarding wizard placeholder */}
-                <p className="mb-3">Thank you for signing up.<br/>Onboarding wizard coming soon (permissions, device selection, etc).</p>
-                <button className="btn btn-large mt-3" onClick={() => navigate("/")}>
-                  Continue to Dashboard
-                </button>
+            <div className="bg-[var(--background-navbar)] rounded-xl border border-[var(--border-color)] p-5 sm:p-7 shadow-md max-w-lg w-full mt-20 md:mt-32">
+              <h2 className="font-bold text-2xl mb-2 text-center">Welcome!</h2>
+              <div className="mb-2 text-center text-[var(--text-secondary)]">
+                Just a couple steps to personalize your experience and maximize your privacy insights.
               </div>
+              <OnboardingWizard onComplete={() => navigate("/")} />
             </div>
           </main>
         </div>
