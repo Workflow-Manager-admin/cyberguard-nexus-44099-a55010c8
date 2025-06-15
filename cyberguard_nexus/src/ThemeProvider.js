@@ -10,6 +10,7 @@ export const ThemeContext = createContext();
  * ThemeProvider wraps children and manages theme context/state.
  * Applies 'dark' class at <html> root for Tailwind and custom CSS.
  */
+// PUBLIC_INTERFACE
 export function ThemeProvider({ children }) {
   // Get system theme once on first load
   const getInitialTheme = () => {
