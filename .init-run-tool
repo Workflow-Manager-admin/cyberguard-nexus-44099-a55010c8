@@ -1,0 +1,4 @@
+{
+    "command": "PORT=<port> BROWSER=none npm start",
+    "working_directory": "/home/kavia/workspace/code-generation/cyberguard-nexus-44099-a55010c8/echoguard_frontend"
+}
