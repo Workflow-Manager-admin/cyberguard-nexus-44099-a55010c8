@@ -1,15 +1,43 @@
 :root {
-  --base-light: #00ffff;
-  --base-dark: #00008b;
+  --color-primary: #00ffff;
+  --color-secondary: #39ff14;
+  --color-accent: #8a2be2;
+  --background-color: #0a0e14;
+  --background-navbar: #060913;
   --text-color: #ffffff;
   --text-secondary: rgba(255, 255, 255, 0.7);
   --border-color: rgba(255, 255, 255, 0.1);
 }
 
+/* Light theme overrides using body:not(.dark), but prefers .dark at the root for easy JS toggle */
+body:not(.dark) {
+  --color-primary: #00ffff;
+  --color-secondary: #39ff14;
+  --color-accent: #8a2be2;
+  --background-color: #f8fafc;
+  --background-navbar: #e8f3ff;
+  --text-color: #111135;
+  --text-secondary: rgba(0,0,0,0.66);
+  --border-color: rgba(0,0,0,0.09);
+}
+
+/* Dark theme variables using .dark */
+.dark,
+.dark body {
+  --color-primary: #00ffff;
+  --color-secondary: #39ff14;
+  --color-accent: #8a2be2;
+  --background-color: #0a0e14;
+  --background-navbar: #060913;
+  --text-color: #ffffff;
+  --text-secondary: rgba(255,255,255,0.7);
+  --border-color: rgba(255,255,255,0.08);
+}
+
 body {
   margin: 0;
   font-family: 'Inter', 'Roboto', 'Helvetica', 'Arial', sans-serif;
-  background-color: var(--base-dark);
+  background-color: var(--background-color);
   color: var(--text-color);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -22,7 +50,7 @@ body {
 }
 
 .navbar {
-  background-color: var(--base-dark);
+  background-color: var(--background-navbar);
   padding: 16px;
   display: flex;
   align-items: center;
@@ -44,7 +72,7 @@ body {
 }
 
 .logo-symbol {
-  color: var(--base-light);
+  color: var(--color-primary);
 }
 
 .container {
@@ -66,7 +94,7 @@ body {
 }
 
 .subtitle {
-  color: var(--base-light);
+  color: var(--color-primary);
   font-weight: 500;
   font-size: 1.1rem;
 }
@@ -87,7 +115,7 @@ body {
 }
 
 .btn {
-  background-color: var(--base-light);
+  background-color: var(--color-primary);
   color: white;
   border: none;
   border-radius: 4px;
@@ -95,11 +123,14 @@ body {
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.22s cubic-bezier(.4,0,.2,1);
+  box-shadow: 0 1px 4px 0 rgba(0,255,255,.08);
 }
 
-.btn:hover {
-  background-color: #7691ff;
+.btn:hover,
+.btn:focus {
+  background-color: var(--color-accent);
+  color: #fff;
 }
 
 .btn-large {
