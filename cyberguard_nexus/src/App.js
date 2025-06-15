@@ -10,16 +10,26 @@ import AuthPage from "./AuthPage";
  * App entry - provides theme and lays out header, sidebar, and main.
  */
 
+/**
+ * Determines the current app route based on user authentication and onboarding status.
+ * This function will always redirect users who completed onboarding to Dashboard,
+ * and makes Dashboard the 'home' view after onboarding.
+ */
 // Utility to check location pathname (supports /dashboard and /home as well)
 function getRouteFromLocation(user, onboarded) {
   const path = window.location.pathname;
-  if (path.startsWith("/signup")) return "signup";
-  if (path.startsWith("/login")) return "login";
-  if (path.startsWith("/onboarding")) return user ? "onboarding" : "login";
-  if (path.startsWith("/dashboard") || path.startsWith("/home")) return user && onboarded ? "dashboard" : "login";
-  // Default route
-  if (!user) return "login";
-  if (!onboarded) return "onboarding";
+  if (!user) {
+    if (path.startsWith("/signup")) return "signup";
+    return "login";
+  }
+  if (!onboarded) {
+    // Only allow /onboarding during onboarding stage
+    if (path.startsWith("/onboarding")) return "onboarding";
+    return "onboarding";
+  }
+  // User is authenticated and onboarded: send to dashboard for any root/home route
+  if (path === "/" || path.startsWith("/dashboard") || path.startsWith("/home")) return "dashboard";
+  // fallback for any other path: dashboard
   return "dashboard";
 }
 
@@ -71,8 +81,17 @@ function App() {
     navigate("/dashboard");
   };
 
-  // Auth (login/signup) routes
+  // Authentication routes: login/signup
   if (route === "login" || route === "signup") {
+    // If already logged in, redirect appropriately
+    if (user && !onboarded) {
+      navigate("/onboarding");
+      return null;
+    }
+    if (user && onboarded) {
+      navigate("/dashboard");
+      return null;
+    }
     return (
       <ThemeProvider>
         <div className="min-h-screen flex flex-col bg-[var(--background-color)]">
@@ -88,8 +107,17 @@ function App() {
     );
   }
 
-  // Onboarding view only if authenticated but not onboarded
+  // Onboarding view - must be logged in and not onboarded
   if (route === "onboarding") {
+    // If finished onboarding & logged in, redirect
+    if (user && onboarded) {
+      navigate("/dashboard");
+      return null;
+    }
+    if (!user) {
+      navigate("/login");
+      return null;
+    }
     const OnboardingWizard = require("./OnboardingWizard").default;
     return (
       <ThemeProvider>
@@ -109,15 +137,23 @@ function App() {
     );
   }
 
-  // If user is not authenticated, block dashboard
-  if (!user || !onboarded) {
-    // Defensive fallback
+  // At this point, user and onboarding both required for dashboard/home route
+  if (!user) {
     navigate("/login");
     return null;
   }
+  if (!onboarded) {
+    navigate("/onboarding");
+    return null;
+  }
 
-  // Always render Dashboard at /dashboard (or /home) for authenticated users after onboarding
+  // Always treat dashboard as default/home after onboarding
   if (route === "dashboard") {
+    // If not already at /dashboard, fix URL (so refreshing / doesn't lose dashboard context)
+    if (!window.location.pathname.startsWith("/dashboard")) {
+      navigate("/dashboard");
+      return null;
+    }
     return (
       <ThemeProvider>
         <div className="min-h-screen flex flex-col font-sans bg-[var(--background-color)] text-[var(--text-color)]">
@@ -149,8 +185,17 @@ function App() {
     );
   }
 
-  // Default fallback, redirect
-  navigate("/login");
+  // Fallback: all invalid or wrong states → dashboard/home after onboarding, or onboarding, or login
+  if (!user) {
+    navigate("/login");
+    return null;
+  }
+  if (!onboarded) {
+    navigate("/onboarding");
+    return null;
+  }
+  // Any other case: go to dashboard
+  navigate("/dashboard");
   return null;
 }
 
