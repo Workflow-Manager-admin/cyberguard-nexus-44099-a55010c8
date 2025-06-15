@@ -7,14 +7,15 @@ import DeviceSyncBanner from "./ui/DeviceSyncBanner";
 import { motion } from "framer-motion";
 
 /**
- * CyberGuard Nexus Dashboard
- * Visually themed dashboard: digital exposure score, data category overviews,
- * 30-day trend graph (dummy data), high-risk alerts, leak/impersonation summary, and today's privacy tip.
- * Fully styled, responsive and using on-theme, modern widgets/Cards/Badges/Motion.
+ * CyberGuard Nexus Dashboard — Modular, futuristic dashboard with
+ * accent color widgets: exposure score, category overview, 30-day chart, alerts,
+ * leak summary, privacy tip, using Cards/Badges, Tailwind grid, and Framer Motion.
+ * Demo uses only dummy/mock data; replace with real API data in the future.
  */
 
-// Mock data for demo (replace with API data as needed)
-const DIGITAL_EXPOSURE_SCORE = 67; // 0-100
+// --- DUMMY DATA ---
+
+const DIGITAL_EXPOSURE_SCORE = 67; // 0-100 demo
 const CATEGORY_OVERVIEW = [
   {
     icon: "📧",
@@ -58,7 +59,6 @@ const CATEGORY_OVERVIEW = [
   },
 ];
 
-// Generate dummy 30-day trend data
 function getMockTrendData() {
   return Array.from({ length: 30 }, (_, i) => ({
     day: i + 1,
@@ -102,7 +102,7 @@ const LEAK_SUMMARY = [
 const AI_PRIVACY_TIP =
   "Enable two-factor authentication on all accounts for an extra layer of security. Avoid reusing passwords.";
 
-// --- Dashboard Trend Graph SVG Component ---
+// --- Exposure Trend Chart as Inline SVG ---
 function ExposureTrendGraph({ data = [], stroke = "var(--color-accent)", height = 48 }) {
   const width = 140;
   const margin = 6;
@@ -122,7 +122,6 @@ function ExposureTrendGraph({ data = [], stroke = "var(--color-accent)", height 
 
   return (
     <svg width={width} height={height} aria-label="Exposure score trend, last 30 days">
-      {/* Gradient for line */}
       <defs>
         <linearGradient id="trendGradient" x1="0" y1="0" x2={width} y2="0" gradientUnits="userSpaceOnUse">
           <stop stopColor="var(--color-primary)" offset="0%" />
@@ -139,7 +138,7 @@ function ExposureTrendGraph({ data = [], stroke = "var(--color-accent)", height 
       />
       <circle
         cx={width - margin}
-        cy={getY(data[data.length-1]?.score)}
+        cy={getY(data[data.length - 1]?.score)}
         r={4}
         fill="var(--color-accent)"
         stroke="var(--background-navbar)"
@@ -156,7 +155,7 @@ export default function Dashboard() {
   return (
     <div className="flex flex-col items-stretch gap-7 py-0 px-1 w-full max-w-4xl mx-auto">
 
-      {/* Banner: Smart Dashboard */}
+      {/* Smart Dashboard banner */}
       <AlertBanner
         open={alertOpen}
         type="info"
@@ -169,13 +168,13 @@ export default function Dashboard() {
         onClose={() => setAlertOpen(false)}
       />
 
-      {/* Device Sync Widget */}
+      {/* Device Sync (future feature) */}
       <DeviceSyncBanner />
 
-      {/* Main dashboard grid */}
+      {/* Main widget grid */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
 
-        {/* --- Digital Exposure Score Widget --- */}
+        {/* Digital Exposure Score card/gauge */}
         <div className="md:col-span-4">
           <Card
             title="Digital Exposure Score"
@@ -215,7 +214,7 @@ export default function Dashboard() {
           </Card>
         </div>
 
-        {/* --- Data Category Overview (Email/Social/Apps/Device/Web) --- */}
+        {/* Category Overview - Email/Social/Apps/Device/Web */}
         <div className="md:col-span-5 flex flex-col gap-2">
           <Card
             title="Category Overview"
@@ -253,7 +252,7 @@ export default function Dashboard() {
           </Card>
         </div>
 
-        {/* --- Exposure Trend Graph (30 days) --- */}
+        {/* 30-day trend graph widget */}
         <div className="md:col-span-3 flex flex-col">
           <Card
             title="Exposure Trend"
@@ -273,7 +272,7 @@ export default function Dashboard() {
           </Card>
         </div>
 
-        {/* --- High Risk Alerts --- */}
+        {/* High-Risk Alerts list */}
         <div className="md:col-span-7">
           <Card
             title="High-Risk Alerts"
@@ -306,7 +305,7 @@ export default function Dashboard() {
           </Card>
         </div>
 
-        {/* --- Leak/Impersonation Summary + Privacy Tip --- */}
+        {/* Leak/impersonation summary & privacy tip */}
         <div className="md:col-span-5 flex flex-col gap-4">
           <Card
             title="Leak & Impersonation Summary"
@@ -330,7 +329,6 @@ export default function Dashboard() {
               ))}
             </div>
           </Card>
-
           <Card
             title="AI Privacy Tip"
             color="secondary"
@@ -348,7 +346,6 @@ export default function Dashboard() {
             </motion.div>
           </Card>
         </div>
-
       </div>
     </div>
   );
