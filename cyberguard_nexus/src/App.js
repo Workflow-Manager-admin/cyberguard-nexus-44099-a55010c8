@@ -14,16 +14,16 @@ function App() {
   // Track pseudo-auth user state locally for demo (would use context in real app)
   const [user, setUser] = useState(null);
 
-  // Handle fake onboarding redirect
+  // Ensure the user is redirected and dashboard shown after onboarding
   const [route, setRoute] = useState(() => {
-    // Read query hash to choose page ("/login", "/signup"), default to login if unauth, dashboard if auth
+    // Read pathname and user presence to determine route
     if (window.location.pathname.startsWith("/signup")) return "signup";
     if (window.location.pathname.startsWith("/login")) return "login";
     if (window.location.pathname.startsWith("/onboarding")) return user ? "onboarding" : "login";
     return user ? "dashboard" : "login";
   });
 
-  // Simulate client-side navigation (hash/history)
+  // Navigation function (simulates client-side navigation)
   const navigate = (to) => {
     window.history.pushState({}, "", to);
     // Recompute route
@@ -33,16 +33,14 @@ function App() {
     else setRoute("dashboard");
   };
 
-  // Called after login/signup "success"
+  // After login/signup, always go to onboarding next
   const handleAuthSuccess = (u) => {
     setUser(u);
-    // Go to onboarding flow after auth
     navigate("/onboarding");
   };
 
-  // Onboarding flow
+  // Onboarding view: after complete, redirect to Dashboard (route is "dashboard")
   if (route === "onboarding") {
-    // Lazy-load onboarding wizard, but since project is small, direct import
     const OnboardingWizard = require("./OnboardingWizard").default;
     return (
       <ThemeProvider>
@@ -54,7 +52,10 @@ function App() {
               <div className="mb-2 text-center text-[var(--text-secondary)]">
                 Just a couple steps to personalize your experience and maximize your privacy insights.
               </div>
-              <OnboardingWizard onComplete={() => navigate("/")} />
+              <OnboardingWizard onComplete={() => {
+                // After completing onboarding, always show Dashboard
+                navigate("/");
+              }} />
             </div>
           </main>
         </div>
@@ -62,7 +63,7 @@ function App() {
     );
   }
 
-  // Auth (login/signup) route
+  // Auth (login/signup) routes
   if (route === "login" || route === "signup") {
     return (
       <ThemeProvider>
@@ -79,7 +80,7 @@ function App() {
     );
   }
 
-  // Dashboard (default main app view)
+  // Always render Dashboard as home/main app view for authenticated users after onboarding
   return (
     <ThemeProvider>
       <div className="min-h-screen flex flex-col font-sans bg-[var(--background-color)] text-[var(--text-color)]">
