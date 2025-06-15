@@ -20,15 +20,20 @@ function App() {
           px-4 pt-8 pb-8"
         >
           <div className="max-w-3xl mx-auto w-full">
+            {/* Dashboard page */}
             <section className="mb-10 mt-8">
-              <div className="flex flex-col gap-2 text-center">
-                <div className="text-secondary font-medium tracking-wide text-lg mb-2">AI Workflow Manager Template</div>
-                <h1 className="text-4xl md:text-5xl font-bold mb-2">cyberguard_nexus</h1>
-                <div className="text-base md:text-lg text-[var(--text-secondary)] mb-4">
-                  Start building your application.
+              <React.Suspense fallback={<div>Loading Dashboard...</div>}>
+                {/* Prefer dynamic import for realistic future codebase, but here we can import directly */}
+                {/*
+                  import Dashboard from './Dashboard'
+                */}
+                <div>
+                  {/*
+                  Below line required: assumes Dashboard.js is created and exports default 
+                  */}
+                  <Dashboard />
                 </div>
-                <button className="btn btn-large w-fit mx-auto">Button</button>
-              </div>
+              </React.Suspense>
             </section>
           </div>
         </main>
