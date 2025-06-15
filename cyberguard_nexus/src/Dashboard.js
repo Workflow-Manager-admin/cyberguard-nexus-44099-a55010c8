@@ -6,6 +6,7 @@ import { Timeline } from "./ui/Timeline";
 import { Modal } from "./ui/Modal";
 import { ProgressRing } from "./ui/ProgressRing";
 import { AlertBanner } from "./ui/AlertBanner";
+import DeviceSyncBanner from "./ui/DeviceSyncBanner";
 // For animation effects
 import { motion } from "framer-motion";
 
@@ -43,6 +44,8 @@ export default function Dashboard() {
         }
         onClose={() => setAlertOpen(false)}
       />
+      {/* Device Sync Banner just under main alert, visually prominent */}
+      <DeviceSyncBanner />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
         {/* Sample Cards */}
