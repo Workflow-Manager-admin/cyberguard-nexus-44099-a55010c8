@@ -6,15 +6,15 @@ import { AlertBanner } from "./ui/AlertBanner";
 import DeviceSyncBanner from "./ui/DeviceSyncBanner";
 import { motion } from "framer-motion";
 
-/*
- * CyberGuard Nexus - Dashboard
- * Shows digital exposure score, data category overviews, trend graph,
- * high-risk alerts, leak/impersonation summary, and AI privacy tip.
+/**
+ * CyberGuard Nexus Dashboard
+ * Visually themed dashboard: digital exposure score, data category overviews,
+ * 30-day trend graph (dummy data), high-risk alerts, leak/impersonation summary, and today's privacy tip.
+ * Fully styled, responsive and using on-theme, modern widgets/Cards/Badges/Motion.
  */
-// PUBLIC_INTERFACE
 
-// Mock data for demonstration (replace with API data as needed)
-const DIGITAL_EXPOSURE_SCORE = 67; // out of 100
+// Mock data for demo (replace with API data as needed)
+const DIGITAL_EXPOSURE_SCORE = 67; // 0-100
 const CATEGORY_OVERVIEW = [
   {
     icon: "📧",
@@ -58,13 +58,13 @@ const CATEGORY_OVERVIEW = [
   },
 ];
 
-// Generate mock 30-day trend data for a line graph
-const getMockTrendData = () =>
-  Array.from({ length: 30 }, (_, i) => ({
+// Generate dummy 30-day trend data
+function getMockTrendData() {
+  return Array.from({ length: 30 }, (_, i) => ({
     day: i + 1,
     score: 60 + Math.round(7 * Math.sin(i / 4) + (Math.random() - 0.5) * 2),
   }));
-
+}
 const trendData = getMockTrendData();
 
 const HIGH_RISK_ALERTS = [
@@ -102,16 +102,15 @@ const LEAK_SUMMARY = [
 const AI_PRIVACY_TIP =
   "Enable two-factor authentication on all accounts for an extra layer of security. Avoid reusing passwords.";
 
-// --- Small component for the trend sparkline (SVG) --- //
+// --- Dashboard Trend Graph SVG Component ---
 function ExposureTrendGraph({ data = [], stroke = "var(--color-accent)", height = 48 }) {
-  // SVG line graph from data
   const width = 140;
   const margin = 6;
   if (!data.length) return null;
   const minScore = Math.min(...data.map(p => p.score));
   const maxScore = Math.max(...data.map(p => p.score));
   const getY = (score) =>
-    height - margin - ((score - minScore) / (maxScore - minScore + 0.02)) * (height - 2 * margin);
+    height - margin - ((score - minScore) / (maxScore - minScore + 0.01)) * (height - 2 * margin);
 
   const points = data
     .map((p, i) => [
@@ -123,7 +122,7 @@ function ExposureTrendGraph({ data = [], stroke = "var(--color-accent)", height 
 
   return (
     <svg width={width} height={height} aria-label="Exposure score trend, last 30 days">
-      {/* Gradient line */}
+      {/* Gradient for line */}
       <defs>
         <linearGradient id="trendGradient" x1="0" y1="0" x2={width} y2="0" gradientUnits="userSpaceOnUse">
           <stop stopColor="var(--color-primary)" offset="0%" />
@@ -150,13 +149,14 @@ function ExposureTrendGraph({ data = [], stroke = "var(--color-accent)", height 
   );
 }
 
+// PUBLIC_INTERFACE
 export default function Dashboard() {
   const [alertOpen, setAlertOpen] = useState(true);
 
   return (
     <div className="flex flex-col items-stretch gap-7 py-0 px-1 w-full max-w-4xl mx-auto">
 
-      {/* Welcome / system banner at top */}
+      {/* Banner: Smart Dashboard */}
       <AlertBanner
         open={alertOpen}
         type="info"
@@ -169,12 +169,13 @@ export default function Dashboard() {
         onClose={() => setAlertOpen(false)}
       />
 
+      {/* Device Sync Widget */}
       <DeviceSyncBanner />
 
-      {/* MAIN DASHBOARD LAYOUT */}
+      {/* Main dashboard grid */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
 
-        {/* Digital Exposure Score */}
+        {/* --- Digital Exposure Score Widget --- */}
         <div className="md:col-span-4">
           <Card
             title="Digital Exposure Score"
@@ -214,7 +215,7 @@ export default function Dashboard() {
           </Card>
         </div>
 
-        {/* Category Overview */}
+        {/* --- Data Category Overview (Email/Social/Apps/Device/Web) --- */}
         <div className="md:col-span-5 flex flex-col gap-2">
           <Card
             title="Category Overview"
@@ -227,7 +228,7 @@ export default function Dashboard() {
               {CATEGORY_OVERVIEW.map((cat, i) => (
                 <div key={cat.label} className="flex flex-col items-center p-2">
                   <span
-                    className={`rounded-lg text-2xl mb-1 inline-block px-2 py-1`}
+                    className="rounded-lg text-2xl mb-1 inline-block px-2 py-1"
                     style={{
                       color: `var(--color-${cat.color})`,
                       background: `rgba(0,255,255,0.07)`
@@ -252,16 +253,14 @@ export default function Dashboard() {
           </Card>
         </div>
 
-        {/* Trend Graph */}
+        {/* --- Exposure Trend Graph (30 days) --- */}
         <div className="md:col-span-3 flex flex-col">
           <Card
             title="Exposure Trend"
             color="accent"
             icon="📈"
             footer={
-              <span className="text-xs text-[var(--text-secondary)]">
-                Past 30 days
-              </span>
+              <span className="text-xs text-[var(--text-secondary)]">Past 30 days</span>
             }
           >
             <div className="flex items-center justify-center">
@@ -274,7 +273,7 @@ export default function Dashboard() {
           </Card>
         </div>
 
-        {/* High-Risk Alerts (spans full row, below top row) */}
+        {/* --- High Risk Alerts --- */}
         <div className="md:col-span-7">
           <Card
             title="High-Risk Alerts"
@@ -282,33 +281,32 @@ export default function Dashboard() {
             icon="⚡"
             footer={null}
           >
-            {HIGH_RISK_ALERTS.length === 0 ?
+            {HIGH_RISK_ALERTS.length === 0 ? (
               <div className="text-sm text-green-400">No high-risk alerts. 🎉</div>
-              : (
-                <div className="flex flex-col gap-2">
-                  {HIGH_RISK_ALERTS.map(alert => (
-                    <div
-                      key={alert.id}
-                      className={`flex items-center gap-2 rounded px-3 py-2 border-l-4 bg-[var(--background-navbar)] 
-                        border-${alert.severity === "danger" ? "accent" : alert.severity === "warning" ? "primary" : "secondary"}
-                        `}
-                      style={{ borderColor: alert.severity === "danger"
+            ) : (
+              <div className="flex flex-col gap-2">
+                {HIGH_RISK_ALERTS.map(alert => (
+                  <div
+                    key={alert.id}
+                    className={`flex items-center gap-2 rounded px-3 py-2 border-l-4 bg-[var(--background-navbar)]`}
+                    style={{
+                      borderColor: alert.severity === "danger"
                         ? "var(--color-accent)"
                         : alert.severity === "warning"
                           ? "var(--color-primary)"
-                          : "var(--color-secondary)" }}
-                    >
-                      <span className="text-lg flex-shrink-0">{alert.icon}</span>
-                      <span className="text-sm">{alert.label}</span>
-                    </div>
-                  ))}
-                </div>
-              )
-            }
+                          : "var(--color-secondary)"
+                    }}
+                  >
+                    <span className="text-lg flex-shrink-0">{alert.icon}</span>
+                    <span className="text-sm">{alert.label}</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </Card>
         </div>
 
-        {/* Leak/Impersonation Summary + Privacy Tip (tall col on right) */}
+        {/* --- Leak/Impersonation Summary + Privacy Tip --- */}
         <div className="md:col-span-5 flex flex-col gap-4">
           <Card
             title="Leak & Impersonation Summary"
@@ -350,6 +348,7 @@ export default function Dashboard() {
             </motion.div>
           </Card>
         </div>
+
       </div>
     </div>
   );
